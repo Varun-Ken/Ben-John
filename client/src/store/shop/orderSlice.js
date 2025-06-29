@@ -92,7 +92,8 @@ const shopOrderSlice = createSlice({
       })
       .addCase(getAllOrdersByUser.rejected, (state) => {
         (state.isLoading = false), (state.orderList = []);
-      });
+      })
+      
   },
 });
 

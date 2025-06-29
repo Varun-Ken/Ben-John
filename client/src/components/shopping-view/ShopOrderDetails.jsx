@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersByUser } from "@/store/shop/orderSlice";
 
 const ShopOrderDetails = (orderDetails) => {
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
   console.log("detail", orderDetails);
   let orderDetail = orderDetails.orderDetails;
   let addressDetail = orderDetails.orderDetails.addressInfo;

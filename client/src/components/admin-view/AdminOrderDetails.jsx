@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { DialogContent } from "../ui/dialog";
+import React, { useEffect, useState } from "react";
+import { DialogContent, DialogTitle } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import CommonForm from "../common/CommonForm";
+import { useDispatch } from "react-redux";
+import { updateOrderStatus } from "@/store/admin/orderSlice";
+import { toast } from "sonner";
 
-const AdminOrderDetails = () => {
-  const [formData, setFormData] = useState({ status: "" });
+const AdminOrderDetails = ({ orderDetails }) => {
+  const [formData, setFormData] = useState({ status: orderDetails.orderStatus || "" });
+  const dispatch = useDispatch()
   const orderStatusControl = [
     {
       label: "Order Status",
@@ -21,17 +25,30 @@ const AdminOrderDetails = () => {
     },
   ];
 
-  const handleStatus = (e) => {
+  const handleStatus = (e,orderId,formData) => {
     e.preventDefault();
+    console.log(orderId,formData.status);
+    dispatch(updateOrderStatus({orderId,status :formData.status})).then(data => {
+      console.log(data);
+      if(data?.payload?.success)
+      {
+        toast("🚦 Order Staus has been Updated")
+      }
+    }) 
   };
 
+  let addressDetail = orderDetails.addressInfo;
+  let cartItems = orderDetails.cartItems || [];
+
+
   return (
-    <DialogContent className="sm:max-[600px] max-h-[600px] overflow-y-hidden">
+    <DialogContent className="sm:max-[600px] max-h-[600px] overflow-y-auto">
+      <DialogTitle/>
       <div className="grid gap-6 mt-5">
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Order ID</p>
-            <Label>58393</Label>
+            <Label>{orderDetails?._id}</Label>
           </div>
         </div>
       </div>
@@ -39,7 +56,7 @@ const AdminOrderDetails = () => {
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Order Date</p>
-            <Label> 12/5/2025</Label>
+            <Label> {orderDetails?.orderDate}</Label>
           </div>
         </div>
       </div>
@@ -47,7 +64,7 @@ const AdminOrderDetails = () => {
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Order Status</p>
-            <Label>In Progress</Label>
+            <Label>{orderDetails?.orderStatus}</Label>
           </div>
         </div>
       </div>
@@ -55,7 +72,7 @@ const AdminOrderDetails = () => {
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Price</p>
-            <Label>$520</Label>
+            <Label>${orderDetails?.totalAmount}</Label>
           </div>
         </div>
       </div>
@@ -64,14 +81,19 @@ const AdminOrderDetails = () => {
       <div className="grid gap-3">
         <div className="font-medium">Order Details</div>
         <ul className="grid gap-3">
-          <li className="flex items-center justify-between">
-            <span>Product #1</span>
-            <span>$135</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span>Product #2</span>
-            <span>$370</span>
-          </li>
+          {cartItems?.length > 0
+            ? cartItems?.map((cartItem) => (
+                <li className="flex items-center justify-between" key={cartItem.title}>
+                  <span>{cartItem.title}</span>
+                  <span>
+                    $
+                    {cartItem.salePrice > 0
+                      ? cartItem.salePrice * cartItem.quantity
+                      : cartItem.price * cartItem.quantity}
+                  </span>
+                </li>
+              ))
+            : null}
         </ul>
       </div>
 
@@ -79,10 +101,11 @@ const AdminOrderDetails = () => {
       <div className="grid gap-2">
         <div className="font-medium">Shipping Details</div>
         <div className="grid text-gray-600">
-          <span>Jason</span>
-          <span>32, Roseline Street</span>
-          <span>Theni</span>
-          <span>Tamil Nadu</span>
+          <span>{addressDetail?.address}</span>
+          <span>{addressDetail?.city}</span>
+          <span>{addressDetail?.pincode}</span>
+          <span>{addressDetail?.state}</span>
+          <span>{addressDetail?.phone}</span>
         </div>
       </div>
       <Separator />
@@ -91,7 +114,7 @@ const AdminOrderDetails = () => {
           formControls={orderStatusControl}
           formData={formData}
           setFormData={setFormData}
-          onSubmit={handleStatus}
+          onSubmit={(e) => handleStatus(e,orderDetails._id,formData)}
         />
       </div>
     </DialogContent>

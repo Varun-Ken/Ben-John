@@ -18,6 +18,7 @@ const ShopOrders = () => {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [orderList, setOrderList] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
+  const [selectedOrderItem, setOrderItem] = useState([]);
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
   const dispatch = useDispatch();
@@ -76,7 +77,7 @@ const ShopOrders = () => {
                         onOpenChange={setOpenDetailsDialog}
                       >
                         <Button
-                          onClick={() => handleOrderDetails(orderItem._id)}
+                          onClick={() => {handleOrderDetails(orderItem._id),setOrderItem(orderItem)}}
                           className="cursor-pointer"
                         >
                           View Details

@@ -10,10 +10,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React, { useState } from "react";
+import { getAllOrders } from "@/store/admin/orderSlice";
+
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const AdminOrders = () => {
-  const [openDetailsDialog, setOpenDetailsDialog] = useState(false)
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const dispatch = useDispatch();
+  const [orderList, setOrderList] = useState([]);
+  const [selectedOrderItem, setOrderItem] = useState([]);
+
+  useEffect(() => {
+    dispatch(getAllOrders()).then((data) => {
+      console.log(data);
+      if (data?.payload?.success) {
+        setOrderList(data?.payload?.data);
+      }
+    });
+  }, []);
+
+  console.log(orderList);
+
   return (
     <Card>
       <CardHeader>
@@ -32,18 +50,30 @@ const AdminOrders = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>58393</TableCell>
-            <TableCell>12/5/2025</TableCell>
-            <TableCell>In Progress</TableCell>
-            <TableCell>$520</TableCell>
-            <TableCell>
-              <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog}>
-                <Button onClick={() => setOpenDetailsDialog(true)} className="cursor-pointer">View Details</Button>
-                <AdminOrderDetails />
-              </Dialog>
-            </TableCell>
-          </TableRow>
+          {orderList?.length > 0
+            ? orderList.map((orderItem) => (
+                <TableRow key={orderItem._id}>
+                  <TableCell>{orderItem._id}</TableCell>
+                  <TableCell>{orderItem.orderDate.split("T")[0]}</TableCell>
+                  <TableCell>{orderItem.orderStatus.toUpperCase()}</TableCell>
+                  <TableCell>${orderItem.totalAmount}</TableCell>
+                  <TableCell>
+                    <Dialog
+                      open={openDetailsDialog}
+                      onOpenChange={setOpenDetailsDialog}
+                    >
+                      <Button
+                        onClick={() => {setOpenDetailsDialog(true);setOrderItem(orderItem)}}
+                        className="cursor-pointer"
+                      >
+                        View Details
+                      </Button>
+                      <AdminOrderDetails orderDetails={selectedOrderItem} />
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              ))
+            : null}
         </TableBody>
       </Table>
     </Card>
