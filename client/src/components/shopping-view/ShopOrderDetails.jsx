@@ -5,22 +5,22 @@ import { Separator } from "../ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersByUser } from "@/store/shop/orderSlice";
 
-const ShopOrderDetails = (orderDetails) => {
+const ShopOrderDetails = ({orderDetails}) => {
+
   console.log("detail", orderDetails);
-  let orderDetail = orderDetails.orderDetails;
-  let addressDetail = orderDetails.orderDetails.addressInfo;
-  let cartItems = orderDetail.cartItems || [];
+  let addressDetail = orderDetails.addressInfo;
+  let cartItems = orderDetails.cartItems || [];
   console.log("Cart", cartItems);
   console.log("Address", addressDetail);
 
 
-  return orderDetail !== undefined ? (
+  return orderDetails !== undefined ? (
     <DialogContent className="sm:max-[600px] max-h-[600px] overflow-y-auto">
       <div className="grid gap-6 mt-5">
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Order ID</p>
-            <Label>{orderDetail._id}</Label>
+            <Label>{orderDetails._id}</Label>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@ const ShopOrderDetails = (orderDetails) => {
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Order Date</p>
-            <Label> {orderDetail?.orderDate}</Label>
+            <Label> {orderDetails?.orderDate}</Label>
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@ const ShopOrderDetails = (orderDetails) => {
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Order Status</p>
-            <Label>{orderDetail?.orderStatus}</Label>
+            <Label>{orderDetails?.orderStatus}</Label>
           </div>
         </div>
       </div>
@@ -44,7 +44,7 @@ const ShopOrderDetails = (orderDetails) => {
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
             <p className="font-medium">Price</p>
-            <Label>${orderDetail.totalAmount}</Label>
+            <Label>${orderDetails.totalAmount}</Label>
           </div>
         </div>
       </div>

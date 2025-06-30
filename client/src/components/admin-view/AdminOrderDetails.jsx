@@ -36,7 +36,7 @@ const AdminOrderDetails = ({ orderDetails }) => {
       }
     }) 
   };
-
+  
   let addressDetail = orderDetails.addressInfo;
   let cartItems = orderDetails.cartItems || [];
 

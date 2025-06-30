@@ -43,6 +43,7 @@ const ShopListing = () => {
   const [sortBy, setSortBy] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const categorySearchParams = searchParams.get("category")
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
@@ -66,7 +67,7 @@ const ShopListing = () => {
   useEffect(() => {
     setSortBy("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
-  }, []);
+  }, [categorySearchParams]);
 
   useEffect(() => {
     if (filters !== null && sortBy !== null)
@@ -85,7 +86,6 @@ const ShopListing = () => {
     if (filters && Object.keys(filters).length > 0) {
       const createQueryString = createSearchParamsHelper(filters);
       setSearchParams(new URLSearchParams(createQueryString));
-      console.log(createQueryString);
     }
   }, [filters]);
 
@@ -188,6 +188,7 @@ const ShopListing = () => {
               product={product}
               handleProductDetails={handleProductDetails}
               handleAddToCart={handleAddToCart}
+               
             />
           ))}
         </div>

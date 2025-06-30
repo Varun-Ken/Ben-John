@@ -1,6 +1,6 @@
 import { LogOut, MenuIcon, ShoppingBag, ShoppingCart } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { shoppingViewMenuItems } from "@/config";
@@ -24,7 +24,9 @@ const HeaderRightCorner = () => {
   const { cartItems } = useSelector((state) => state.cartProducts);
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
+  
 
   useEffect(() => {
     dispatch(fetchCartItems(user?.id));
@@ -34,7 +36,10 @@ const HeaderRightCorner = () => {
     <div className="flex lg:items-center lg:flex-row flex-col gap-3 cursor-pointer">
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <ShoppingCart onClick={() => setOpenCartSheet(true)} />
-        <UserCartWrapper cartItems={cartItems.items} setOpenCartSheet={setOpenCartSheet}/>
+        <UserCartWrapper
+          cartItems={cartItems.items}
+          setOpenCartSheet={setOpenCartSheet}
+        />
       </Sheet>
 
       <DropdownMenu>
@@ -71,16 +76,21 @@ const HeaderRightCorner = () => {
 
 const MenuItems = () => {
   const navigate = useNavigate();
+  const [searchParams,setSearchParams] = useSearchParams()
+  useSearchParams(new URLSearchParams())
 
   const handleNavigate = (getCurrentItem) => {
     sessionStorage.removeItem("filters");
     const currentFilter =
-      getCurrentItem.id !== "home"
+      getCurrentItem.id !== "home" && getCurrentItem.id !== "products"
         ? {
             category: [getCurrentItem.id],
           }
         : null;
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+
+    location.pathname.includes("listing") && currentFilter !== null ?
+    setSearchParams(new URLSearchParams(`?category=${getCurrentItem.id}`)) :
     navigate(getCurrentItem.path);
   };
 

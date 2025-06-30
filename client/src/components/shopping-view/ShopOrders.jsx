@@ -41,10 +41,9 @@ const ShopOrders = () => {
         setOrderDetails(data?.payload?.data)
       }
     })
-
   }
 
-  console.log(orderList);
+  console.log(selectedOrderItem);
 
   return (
     <Card>
@@ -82,7 +81,7 @@ const ShopOrders = () => {
                         >
                           View Details
                         </Button>
-                        <ShopOrderDetails orderDetails={orderDetails} />
+                        <ShopOrderDetails orderDetails={selectedOrderItem} />
                       </Dialog>
                     </TableCell>
                   </TableRow>
